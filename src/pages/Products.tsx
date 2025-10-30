@@ -17,16 +17,16 @@ import {
   Watch
 } from "lucide-react";
 
-// Mock product data
+// Mock product data (Prices in INR)
 const products = [
-  { id: 1, name: "iPhone 15 Pro", price: 999, category: "Smartphones", rating: 4.8, reviews: 1234, image: "📱" },
-  { id: 2, name: "Samsung Galaxy S24", price: 899, category: "Smartphones", rating: 4.7, reviews: 987, image: "📱" },
-  { id: 3, name: "MacBook Pro M3", price: 1999, category: "Laptops", rating: 4.9, reviews: 2341, image: "💻" },
-  { id: 4, name: "Dell XPS 15", price: 1599, category: "Laptops", rating: 4.6, reviews: 876, image: "💻" },
-  { id: 5, name: "Sony WH-1000XM5", price: 399, category: "Audio", rating: 4.8, reviews: 3421, image: "🎧" },
-  { id: 6, name: "AirPods Pro 2", price: 249, category: "Audio", rating: 4.7, reviews: 5632, image: "🎧" },
-  { id: 7, name: "Apple Watch Series 9", price: 399, category: "Wearables", rating: 4.8, reviews: 2109, image: "⌚" },
-  { id: 8, name: "Samsung Galaxy Watch 6", price: 299, category: "Wearables", rating: 4.6, reviews: 1543, image: "⌚" },
+  { id: 1, name: "iPhone 15 Pro", price: 82900, category: "Smartphones", rating: 4.8, reviews: 1234, image: "📱" },
+  { id: 2, name: "Samsung Galaxy S24", price: 74600, category: "Smartphones", rating: 4.7, reviews: 987, image: "📱" },
+  { id: 3, name: "MacBook Pro M3", price: 165900, category: "Laptops", rating: 4.9, reviews: 2341, image: "💻" },
+  { id: 4, name: "Dell XPS 15", price: 132700, category: "Laptops", rating: 4.6, reviews: 876, image: "💻" },
+  { id: 5, name: "Sony WH-1000XM5", price: 33100, category: "Audio", rating: 4.8, reviews: 3421, image: "🎧" },
+  { id: 6, name: "AirPods Pro 2", price: 20700, category: "Audio", rating: 4.7, reviews: 5632, image: "🎧" },
+  { id: 7, name: "Apple Watch Series 9", price: 33100, category: "Wearables", rating: 4.8, reviews: 2109, image: "⌚" },
+  { id: 8, name: "Samsung Galaxy Watch 6", price: 24800, category: "Wearables", rating: 4.6, reviews: 1543, image: "⌚" },
 ];
 
 const categories = [
@@ -39,7 +39,7 @@ const categories = [
 const Products = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const [priceRange, setPriceRange] = useState([0, 2000]);
+  const [priceRange, setPriceRange] = useState([0, 170000]);
   const [favorites, setFavorites] = useState<number[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
 
@@ -132,13 +132,13 @@ const Products = () => {
                 <div className="flex justify-between items-center">
                   <label className="text-sm font-medium">Price Range</label>
                   <span className="text-sm text-muted-foreground">
-                    ${priceRange[0]} - ${priceRange[1]}
+                    ₹{priceRange[0].toLocaleString('en-IN')} - ₹{priceRange[1].toLocaleString('en-IN')}
                   </span>
                 </div>
                 <Slider
                   min={0}
-                  max={2000}
-                  step={50}
+                  max={170000}
+                  step={5000}
                   value={priceRange}
                   onValueChange={setPriceRange}
                   className="w-full"
@@ -201,7 +201,7 @@ const Products = () => {
               </CardContent>
               <CardFooter className="flex justify-between items-center">
                 <span className="text-2xl font-bold text-primary">
-                  ${product.price}
+                  ₹{product.price.toLocaleString('en-IN')}
                 </span>
                 <Button 
                   size="sm"

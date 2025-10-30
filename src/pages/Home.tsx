@@ -7,21 +7,11 @@ import {
   Heart, 
   Star,
   Smartphone,
-  Laptop,
-  Headphones,
-  Watch,
   ArrowRight
 } from "lucide-react";
 
 const Home = () => {
   const navigate = useNavigate();
-
-  const categories = [
-    { icon: Smartphone, name: "Smartphones", count: 150 },
-    { icon: Laptop, name: "Laptops", count: 89 },
-    { icon: Headphones, name: "Audio", count: 234 },
-    { icon: Watch, name: "Wearables", count: 67 },
-  ];
 
   const sections = [
     {
@@ -83,29 +73,6 @@ const Home = () => {
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Your one-stop destination for finding the best deals on electronics
           </p>
-        </div>
-
-        {/* Categories */}
-        <div className="mb-12">
-          <h3 className="text-2xl font-semibold mb-6">Popular Categories</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {categories.map((category) => {
-              const Icon = category.icon;
-              return (
-                <Card 
-                  key={category.name} 
-                  className="gradient-card shadow-card hover:shadow-hover transition-smooth cursor-pointer"
-                  onClick={() => navigate('/products')}
-                >
-                  <CardContent className="pt-6 text-center">
-                    <Icon className="w-12 h-12 mx-auto mb-3 text-primary" />
-                    <h4 className="font-semibold mb-1">{category.name}</h4>
-                    <p className="text-sm text-muted-foreground">{category.count} items</p>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
         </div>
 
         {/* Main Sections */}

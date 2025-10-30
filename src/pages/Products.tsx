@@ -10,7 +10,11 @@ import {
   Search, 
   Star,
   Heart,
-  Filter
+  Filter,
+  Smartphone,
+  Laptop,
+  Headphones,
+  Watch
 } from "lucide-react";
 
 // Mock product data
@@ -25,16 +29,25 @@ const products = [
   { id: 8, name: "Samsung Galaxy Watch 6", price: 299, category: "Wearables", rating: 4.6, reviews: 1543, image: "⌚" },
 ];
 
+const categories = [
+  { icon: Smartphone, name: "Smartphones", count: 150 },
+  { icon: Laptop, name: "Laptops", count: 89 },
+  { icon: Headphones, name: "Audio", count: 234 },
+  { icon: Watch, name: "Wearables", count: 67 },
+];
+
 const Products = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [priceRange, setPriceRange] = useState([0, 2000]);
   const [favorites, setFavorites] = useState<number[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("All");
 
   const filteredProducts = products.filter(product => 
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
     product.price >= priceRange[0] &&
-    product.price <= priceRange[1]
+    product.price <= priceRange[1] &&
+    (selectedCategory === "All" || product.category === selectedCategory)
   );
 
   const toggleFavorite = (id: number) => {
@@ -73,6 +86,35 @@ const Products = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
+              {/* Categories */}
+              <div className="space-y-3">
+                <label className="text-sm font-medium">Categories</label>
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                  <Button
+                    variant={selectedCategory === "All" ? "default" : "outline"}
+                    onClick={() => setSelectedCategory("All")}
+                    className="h-auto py-3 flex flex-col gap-2"
+                  >
+                    <Filter className="w-5 h-5" />
+                    <span className="text-xs">All</span>
+                  </Button>
+                  {categories.map((category) => {
+                    const Icon = category.icon;
+                    return (
+                      <Button
+                        key={category.name}
+                        variant={selectedCategory === category.name ? "default" : "outline"}
+                        onClick={() => setSelectedCategory(category.name)}
+                        className="h-auto py-3 flex flex-col gap-2"
+                      >
+                        <Icon className="w-5 h-5" />
+                        <span className="text-xs">{category.name}</span>
+                      </Button>
+                    );
+                  })}
+                </div>
+              </div>
+
               {/* Search */}
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />

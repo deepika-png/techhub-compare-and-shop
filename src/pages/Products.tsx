@@ -16,17 +16,25 @@ import {
   Headphones,
   Watch
 } from "lucide-react";
+import iphone15Pro from "@/assets/iphone-15-pro.jpg";
+import samsungS24 from "@/assets/samsung-galaxy-s24.jpg";
+import macbookPro from "@/assets/macbook-pro-m3.jpg";
+import dellXps from "@/assets/dell-xps-15.jpg";
+import sonyHeadphones from "@/assets/sony-wh1000xm5.jpg";
+import airpodsPro from "@/assets/airpods-pro-2.jpg";
+import appleWatch from "@/assets/apple-watch-9.jpg";
+import samsungWatch from "@/assets/samsung-watch-6.jpg";
 
 // Mock product data (Prices in INR)
 const products = [
-  { id: 1, name: "iPhone 15 Pro", price: 82900, category: "Smartphones", rating: 4.8, reviews: 1234, image: "📱" },
-  { id: 2, name: "Samsung Galaxy S24", price: 74600, category: "Smartphones", rating: 4.7, reviews: 987, image: "📱" },
-  { id: 3, name: "MacBook Pro M3", price: 165900, category: "Laptops", rating: 4.9, reviews: 2341, image: "💻" },
-  { id: 4, name: "Dell XPS 15", price: 132700, category: "Laptops", rating: 4.6, reviews: 876, image: "💻" },
-  { id: 5, name: "Sony WH-1000XM5", price: 33100, category: "Audio", rating: 4.8, reviews: 3421, image: "🎧" },
-  { id: 6, name: "AirPods Pro 2", price: 20700, category: "Audio", rating: 4.7, reviews: 5632, image: "🎧" },
-  { id: 7, name: "Apple Watch Series 9", price: 33100, category: "Wearables", rating: 4.8, reviews: 2109, image: "⌚" },
-  { id: 8, name: "Samsung Galaxy Watch 6", price: 24800, category: "Wearables", rating: 4.6, reviews: 1543, image: "⌚" },
+  { id: 1, name: "iPhone 15 Pro", price: 82900, category: "Smartphones", rating: 4.8, reviews: 1234, image: iphone15Pro },
+  { id: 2, name: "Samsung Galaxy S24", price: 74600, category: "Smartphones", rating: 4.7, reviews: 987, image: samsungS24 },
+  { id: 3, name: "MacBook Pro M3", price: 165900, category: "Laptops", rating: 4.9, reviews: 2341, image: macbookPro },
+  { id: 4, name: "Dell XPS 15", price: 132700, category: "Laptops", rating: 4.6, reviews: 876, image: dellXps },
+  { id: 5, name: "Sony WH-1000XM5", price: 33100, category: "Audio", rating: 4.8, reviews: 3421, image: sonyHeadphones },
+  { id: 6, name: "AirPods Pro 2", price: 20700, category: "Audio", rating: 4.7, reviews: 5632, image: airpodsPro },
+  { id: 7, name: "Apple Watch Series 9", price: 33100, category: "Wearables", rating: 4.8, reviews: 2109, image: appleWatch },
+  { id: 8, name: "Samsung Galaxy Watch 6", price: 24800, category: "Wearables", rating: 4.6, reviews: 1543, image: samsungWatch },
 ];
 
 const categories = [
@@ -183,8 +191,12 @@ const Products = () => {
                 className="space-y-4"
                 onClick={() => navigate(`/product/${product.id}`)}
               >
-                <div className="text-6xl text-center py-4">
-                  {product.image}
+                <div className="aspect-square overflow-hidden rounded-lg bg-muted">
+                  <img 
+                    src={product.image} 
+                    alt={product.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-smooth"
+                  />
                 </div>
                 <CardTitle className="text-lg group-hover:text-primary transition-smooth">
                   {product.name}

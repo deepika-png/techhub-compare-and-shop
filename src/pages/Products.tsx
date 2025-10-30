@@ -55,7 +55,8 @@ const Products = () => {
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
     product.price >= priceRange[0] &&
     product.price <= priceRange[1] &&
-    (selectedCategory === "All" || product.category === selectedCategory)
+    (selectedCategory === "All" || 
+     selectedCategory === "Favorites" ? favorites.includes(product.id) : product.category === selectedCategory)
   );
 
   const toggleFavorite = (id: number) => {
@@ -97,7 +98,7 @@ const Products = () => {
               {/* Categories */}
               <div className="space-y-3">
                 <label className="text-sm font-medium">Categories</label>
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
                   <Button
                     variant={selectedCategory === "All" ? "default" : "outline"}
                     onClick={() => setSelectedCategory("All")}
@@ -105,6 +106,14 @@ const Products = () => {
                   >
                     <Filter className="w-5 h-5" />
                     <span className="text-xs">All</span>
+                  </Button>
+                  <Button
+                    variant={selectedCategory === "Favorites" ? "default" : "outline"}
+                    onClick={() => setSelectedCategory("Favorites")}
+                    className="h-auto py-3 flex flex-col gap-2"
+                  >
+                    <Heart className="w-5 h-5" />
+                    <span className="text-xs">Favorites ({favorites.length})</span>
                   </Button>
                   {categories.map((category) => {
                     const Icon = category.icon;

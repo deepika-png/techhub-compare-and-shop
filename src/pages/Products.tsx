@@ -48,7 +48,10 @@ const Products = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [priceRange, setPriceRange] = useState([0, 170000]);
-  const [favorites, setFavorites] = useState<number[]>([]);
+  const [favorites, setFavorites] = useState<number[]>(() => {
+    const stored = localStorage.getItem('favorites');
+    return stored ? JSON.parse(stored) : [];
+  });
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
 
   const filteredProducts = products.filter(product => 
@@ -60,9 +63,11 @@ const Products = () => {
   );
 
   const toggleFavorite = (id: number) => {
-    setFavorites(prev => 
-      prev.includes(id) ? prev.filter(fav => fav !== id) : [...prev, id]
-    );
+    setFavorites(prev => {
+      const newFavorites = prev.includes(id) ? prev.filter(fav => fav !== id) : [...prev, id];
+      localStorage.setItem('favorites', JSON.stringify(newFavorites));
+      return newFavorites;
+    });
   };
 
   return (

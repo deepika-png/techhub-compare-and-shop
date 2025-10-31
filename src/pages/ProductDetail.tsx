@@ -5,13 +5,16 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import { 
   ArrowLeft, 
   Star,
   Heart,
   TrendingDown,
   ExternalLink,
-  ThumbsUp
+  ThumbsUp,
+  RefreshCw
 } from "lucide-react";
 import iphone15Pro from "@/assets/iphone-15-pro.jpg";
 import samsungS24 from "@/assets/samsung-galaxy-s24.jpg";
@@ -231,6 +234,9 @@ const ProductDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [isFavorite, setIsFavorite] = useState(false);
+  const [livePrices, setLivePrices] = useState<any[]>([]);
+  const [isLoadingPrices, setIsLoadingPrices] = useState(false);
+  const [priceAnalysis, setPriceAnalysis] = useState<any>(null);
   
   const productId = parseInt(id || "1");
   const product = productDetails[productId] || productDetails[1];
@@ -241,7 +247,35 @@ const ProductDetail = () => {
       const favorites = JSON.parse(storedFavorites);
       setIsFavorite(favorites.includes(productId));
     }
+    // Fetch live prices on component mount
+    fetchLivePrices();
   }, [productId]);
+
+  const fetchLivePrices = async () => {
+    setIsLoadingPrices(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('compare-prices', {
+        body: { 
+          productName: product.name,
+          category: product.category 
+        }
+      });
+
+      if (error) throw error;
+
+      if (data.success) {
+        setLivePrices(data.prices);
+        setPriceAnalysis(data.analysis);
+        toast.success(`Found ${data.prices.length} prices - Save up to ${data.analysis.savingsPercentage}%!`);
+      }
+    } catch (error) {
+      console.error('Error fetching prices:', error);
+      toast.error('Failed to fetch live prices. Showing default prices.');
+      setLivePrices(product.prices); // Fallback to mock data
+    } finally {
+      setIsLoadingPrices(false);
+    }
+  };
 
   const toggleFavorite = () => {
     const storedFavorites = localStorage.getItem('favorites');
@@ -255,7 +289,8 @@ const ProductDetail = () => {
     setIsFavorite(!isFavorite);
   };
 
-  const bestPrice = Math.min(...product.prices.map((p: any) => p.price));
+  const displayPrices = livePrices.length > 0 ? livePrices : product.prices;
+  const bestPrice = Math.min(...displayPrices.map((p: any) => p.price));
 
   return (
     <div className="min-h-screen bg-background">
@@ -324,13 +359,37 @@ const ProductDetail = () => {
           {/* Price Comparison */}
           <Card className="gradient-card shadow-card">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <TrendingDown className="w-6 h-6 text-accent" />
-                Price Comparison
-              </CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingDown className="w-6 h-6 text-accent" />
+                  Live Price Comparison
+                </CardTitle>
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={fetchLivePrices}
+                  disabled={isLoadingPrices}
+                  className="gap-2"
+                >
+                  <RefreshCw className={`w-4 h-4 ${isLoadingPrices ? 'animate-spin' : ''}`} />
+                  Refresh
+                </Button>
+              </div>
+              {priceAnalysis && (
+                <p className="text-sm text-muted-foreground mt-2">
+                  Save up to ₹{priceAnalysis.savings.toLocaleString('en-IN')} ({priceAnalysis.savingsPercentage}%) 
+                  by choosing {priceAnalysis.bestRetailer}
+                </p>
+              )}
             </CardHeader>
             <CardContent className="space-y-4">
-              {product.prices.map((price, index) => (
+              {isLoadingPrices && (
+                <div className="text-center py-8 text-muted-foreground">
+                  <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-2" />
+                  <p>Fetching live prices...</p>
+                </div>
+              )}
+              {!isLoadingPrices && displayPrices.map((price, index) => (
                 <Card 
                   key={index}
                   className={`border-2 transition-smooth ${

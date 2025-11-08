@@ -7,45 +7,59 @@ import jwt from "jsonwebtoken";
 
 dotenv.config();
 const app = express();
-app.use(express.json());
-app.use(cors());
 
+// ✅ Middleware
+app.use(express.json());
+app.use(cors({ origin: "*", methods: ["GET", "POST"], allowedHeaders: ["Content-Type", "Authorization"] }));
+
+// ✅ Connect to MongoDB Atlas
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log("✅ Connected to MongoDB Atlas"))
-  .catch((err) => console.error(err));
+  .catch((err) => console.error("MongoDB connection error:", err));
 
+// ✅ Define Schema
 const userSchema = new mongoose.Schema({
   username: String,
   email: { type: String, unique: true },
   password: String,
 });
 
-// connect model to `login` collection
+// ✅ Model (uses `login` collection)
 const User = mongoose.model("login", userSchema, "login");
 
+// ✅ Test route
+app.get("/", (req, res) => {
+  res.json({ message: "✅ TechHub backend is running!" });
+});
 
-
-// Signup API
+// ✅ Signup API
 app.post("/signup", async (req, res) => {
   try {
     const { name, email, password } = req.body;
+
+    if (!email || !password) return res.status(400).json({ message: "Email and password required" });
+
     const existingUser = await User.findOne({ email });
     if (existingUser) return res.status(400).json({ message: "User already exists" });
 
     const hashed = await bcrypt.hash(password, 10);
-    const user = new User({ name, email, password: hashed });
+    const user = new User({ username: name, email, password: hashed });
     await user.save();
 
     res.status(201).json({ message: "Account created successfully!" });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error(err);
+    res.status(500).json({ message: "Server error: " + err.message });
   }
 });
 
-// Login API
+// ✅ Login API
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    if (!email || !password) return res.status(400).json({ message: "Email and password required" });
+
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: "Invalid credentials" });
 
@@ -53,9 +67,10 @@ app.post("/login", async (req, res) => {
     if (!valid) return res.status(400).json({ message: "Invalid credentials" });
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
-    res.json({ message: "Login successful", token });
+    res.status(200).json({ message: "Login successful", token });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error(err);
+    res.status(500).json({ message: "Server error: " + err.message });
   }
 });
 
